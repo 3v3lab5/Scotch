@@ -1,3 +1,12 @@
+
+Changes SCOTCH V.1.0 (Release Candidate)
+Wifi Fix
+Icon Fix
+Error from Server Ui
+OTA Updater included
+Ui fix
+Buzzer issues fixed
+
 Changes SCOTCH V0.10
 1.After Reboot dripo continues the pending infusion
 2.Name change Wifi conf to wifi
@@ -13,13 +22,7 @@ Changes SCOTCH V0.10
 9.CPU freq changes from 80Mhz to 160Mhz
 
 
-Changes SCOTCH V0.11
-1.
-
-
 
 To do
-Beep sound for  completion/empty
-icon modifications
 AES128 encryption
-
+Webserver page design
