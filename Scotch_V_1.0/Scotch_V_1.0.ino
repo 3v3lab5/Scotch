@@ -13,7 +13,6 @@
 #include <DNSServer.h>
 //#include <ESP8266mDNS.h>
 #include <ESP8266WebServer.h>
-//#include <WiFiManager.h>
 #include <elapsedMillis.h>
 #include <Ticker.h>
 #include "src/icons.h"

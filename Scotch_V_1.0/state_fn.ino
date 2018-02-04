@@ -468,12 +468,12 @@ void ServErr()
 {
   switch (get_button())
   {
-    case 1: if (dialogbox.getDia() == "Ok") {
+    case 1: //if (dialogbox.getDia() == "Ok") {
         state = 19;
         ui_state = 19;
         break;
 
-      }
+      //}
 
   }
 }
