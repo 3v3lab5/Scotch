@@ -12,6 +12,8 @@ class ERR_HANDLER
 		bool STA_ACK;
 		bool DEV_ACK;
 		int ERR;
+		int mode;
+		int batchrge;
 		char ID[30]={'0'};
 		String MED,_Timetable;
 		int RATE,INFVOL,RTIME,TVOL;
@@ -25,7 +27,7 @@ class ERR_HANDLER
 
 	public:
 		ERR_HANDLER(U8G2 u8,PubSubClient mqclnt);
-		bool display_err(String,int,bool,bool,char[],String,int,int,int,int);
+		bool display_err(String,int,bool,bool,char[],String,int,int,int,int,int,int);
 		void err_alerttype1();
 		void err_alerttype2();
 		void err_alerttype3();

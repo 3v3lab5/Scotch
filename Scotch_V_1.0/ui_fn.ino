@@ -37,21 +37,43 @@ void UI_Menu()
 
 //Rate Menu-- contains monitoring mode also
 void UI_Rate()
-
 {
-  analogWriteFreq(38000);           ///set ir frequency to 38khz
+
+
+  //analogWriteFreq(38000);           ///set ir frequency to 38khz
   analogWrite(IR_PIN, irAmp);       // Start Ir
+  if (analogRead(A0) < 510 && irAmp < 1014)
+  {
+    irAmp = irAmp + 1;
+  }
+
+  else if (analogRead(A0) > 526 && irAmp > 0)
+  {
+    irAmp = irAmp - 1;
+  }
+  // analogWrite(IR_PIN, 700);
   //logstatus=LogData(logtime,logstatus);      //log data on each drop
   // attachInterrupt(digitalPinToInterrupt(DROP_PIN), checkdrop, HIGH);
 
   u8g2.setDrawColor(1);
   String txt;
+  // if (outofrange == false) {
   txt = _dripo.getRate();
   u8g2.setFont(u8g2_font_timR24_tn);
   u8g2.setCursor(32 - (u8g2.getStrWidth(txt.c_str()) / 2), 47);
   u8g2.print(_dripo.getRate());
+  // }
+
+  //  else{
+  //    u8g2.setCursor(32, 47);
+  //    u8g2.print("0");
+  //
+  //  }
+
   // u8g2.drawHLine(0, 64, 13);
   // u8g2.drawHLine(51, 64, 13);
+
+
   u8g2.setDrawColor(detect1);                   // change to 0 when detects otherwise 2
   u8g2.drawBox(13, 57, 38, 15);
   u8g2.setDrawColor(detect2);                   //change to 1 when detects  otherwise 0
@@ -82,7 +104,7 @@ void UI_Rate()
     u8g2.setFont(u8g2_font_timR18_tn);
     u8g2.setCursor(0, 116);
     u8g2.print(_dripo.getR2setDPM());
-
+    //u8g2.print(analogRead(A0));
   }
 
   // canceling infusion
@@ -121,7 +143,7 @@ void UI_Rate()
         devAck = false;
         staAck = false;
 
-        if (ticker_reached) {
+        if (ticker_reached && prev_inf_save == 1) {
 
           sendRate();
         }
@@ -153,7 +175,7 @@ void UI_Rate()
       if (staAck == true)
       {
         acktime = millis();
-        if (acktime - prev_acktime >= 90000)
+        if (acktime - prev_acktime >= 120000)
         {
           staAck = false;
           prev_acktime = acktime;
@@ -166,14 +188,14 @@ void UI_Rate()
       if (staAck == false)
       {
         alerttime = millis();
-        if (alerttime - prev_alerttime >= 15000)
+        if (alerttime - prev_alerttime >= 20000)
         {
           prev_alerttime = alerttime;
           prev_acktime = alerttime;
           _errAlert.wasExecuted();
         }
       }
-      sleeper = _errAlert.display_err(_dripo.getTimetable(), altmsg, devAck, staAck, id, _dripo.getMed(), _dripo.getRateMl(), _dripo.getvolInf(), _dripo.getRtime(), _dripo.getTvol());
+      sleeper = _errAlert.display_err(_dripo.getTimetable(), altmsg, devAck, staAck, id, _dripo.getMed(), _dripo.getRateMl(), _dripo.getvolInf(), _dripo.getRtime(), _dripo.getTvol(), prev_inf_save, stateOfCharge);
       // if(callerrhandlerflag==true)
       // {
       //     sleeper=_errAlert.display_err(altmsg,devAck,staAck,id,_dripo.getMed());
@@ -192,14 +214,17 @@ void UI_Rate()
             EEPROM.commit();
             EEPROM.end();
             prev_inf = 0;
-            DataStatus = "stop";
+            if (prev_inf_save == 1)
+            {
+              DataStatus = "stop";
+            }
             state = 2;
             ui_state = 2;
             infuseMenu = 1;
             MonState = 0;
           }
           else {
-            sleeper = _errAlert.display_err(_dripo.getTimetable(), altmsg, devAck, staAck, id, _dripo.getMed(), _dripo.getRateMl(), _dripo.getvolInf(), _dripo.getRtime(), _dripo.getTvol());
+            sleeper = _errAlert.display_err(_dripo.getTimetable(), altmsg, devAck, staAck, id, _dripo.getMed(), _dripo.getRateMl(), _dripo.getvolInf(), _dripo.getRtime(), _dripo.getTvol(), prev_inf_save, stateOfCharge);
 
             PMonState = MonState;
             MonState = 0;
@@ -373,42 +398,69 @@ void UI_infuse()
 
         }
         else if (dialogbox.getDia() == "Yes") {
-          if (stateOfCharge > (15 + (_dripo.getTtime() / 12)))
+          char med[35];
+          char timet[35];
+          String timeidcpy = _dripo.getTimetable();
+          timeidcpy.toCharArray(timet, 35);
+
+          String medidcpy = _dripo.getMed();
+          medidcpy.toCharArray(med, 35);
+
+          EEPROM.begin(512);
+          EEPROM.put(40, _dripo.getDf());
+          EEPROM.commit();
+
+
+          EEPROM.put(50, timet);
+          EEPROM.commit();
+
+          EEPROM.put(90, med );
+          EEPROM.commit();
+
+          EEPROM.put(130, _dripo.getTvol());
+          EEPROM.commit();
+
+          EEPROM.put(150, _dripo.getrate2set());
+          EEPROM.commit();
+          EEPROM.end();
+          prev_inf_save = 1;
+          if (stateOfCharge > (10 * (_dripo.getTtime() / 60)))
           {
-            char med[35];
-            char timet[35];
-            String timeidcpy = _dripo.getTimetable();
-            timeidcpy.toCharArray(timet, 35);
-
-            String medidcpy = _dripo.getMed();
-            medidcpy.toCharArray(med, 35);
-
-            EEPROM.begin(512);
-            EEPROM.put(40, _dripo.getDf());
-            EEPROM.commit();
-
-
-            EEPROM.put(50, timet);
-            EEPROM.commit();
-
-            EEPROM.put(90, med );
-            EEPROM.commit();
-
-            EEPROM.put(130, _dripo.getTvol());
-            EEPROM.commit();
-
-            EEPROM.put(150, _dripo.getrate2set());
-            EEPROM.commit();
-            EEPROM.end();
-            //            ui_state = 3;   //testing
-            //            state = 9;
-
+            //            char med[35];
+            //            char timet[35];
+            //            String timeidcpy = _dripo.getTimetable();
+            //            timeidcpy.toCharArray(timet, 35);
+            //
+            //            String medidcpy = _dripo.getMed();
+            //            medidcpy.toCharArray(med, 35);
+            //
+            //            EEPROM.begin(512);
+            //            EEPROM.put(40, _dripo.getDf());
+            //            EEPROM.commit();
+            //
+            //
+            //            EEPROM.put(50, timet);
+            //            EEPROM.commit();
+            //
+            //            EEPROM.put(90, med );
+            //            EEPROM.commit();
+            //
+            //            EEPROM.put(130, _dripo.getTvol());
+            //            EEPROM.commit();
+            //
+            //            EEPROM.put(150, _dripo.getrate2set());
+            //            EEPROM.commit();
+            //            EEPROM.end();
+            //            prev_inf_save = 1;
+            //                        ui_state = 3;   //testing
+            //                        state = 9;
+            irAmp = 350;
             ui_state = 16;
             state = 18;
           }
           else
           {
-
+            irAmp = 350;
             ui_state = 13;
             state = 16;
           }
@@ -427,30 +479,32 @@ void UI_infuse()
 void UI_Update() {
 
   u8g2.setDrawColor(1);
- // if (up_date == true)
- // {
-    u8g2.setDrawColor(2);
-    u8g2.drawBox(0, 110, 64, 14);
+  // if (up_date == true)
+  // {
+  u8g2.setDrawColor(2);
+  u8g2.drawBox(0, 110, 64, 14);
 
-    u8g2.setDrawColor(0);
-    u8g2.setFont(u8g2_font_crox2h_tr);
-    int strwidth = u8g2.getStrWidth(up_status.c_str());
-    u8g2.setCursor(32 - (strwidth / 2), 121);
-    u8g2.print(up_status.c_str());
+  u8g2.setDrawColor(0);
+  u8g2.setFont(u8g2_font_crox2h_tr);
+  int strwidth = u8g2.getStrWidth(up_status.c_str());
+  u8g2.setCursor(32 - (strwidth / 2), 121);
+  u8g2.print(up_status.c_str());
 
- // }
-    u8g2.setDrawColor(1);
+  // }
+  u8g2.setDrawColor(1);
 
   // u8g2.drawXBM(8, 35, update_icon_width, update_icon_height, update_icon_bits);
-  u8g2.setCursor(0, 10);
+  u8g2.setCursor(32 - ( u8g2.getStrWidth("Press") / 2), 10);
   u8g2.print("Press");
-  u8g2.setCursor(0, 30);
+  u8g2.setCursor(32 - ( u8g2.getStrWidth("and Hold") / 2), 30);
   u8g2.print("and Hold");
-  u8g2.setCursor(0, 50);
+  u8g2.setCursor(32 - ( u8g2.getStrWidth("Select Key") / 2), 50);
   u8g2.print("Select Key");
-  u8g2.setCursor(0, 70);
+  u8g2.setCursor(32 - ( u8g2.getStrWidth("for") / 2), 70);
+
   u8g2.print("for");
-  u8g2.setCursor(0, 90);
+  u8g2.setCursor(32 - ( u8g2.getStrWidth("Updating") / 2), 90);
+
   u8g2.print("Updating");
 
 
@@ -459,7 +513,10 @@ void UI_Update() {
 
 //Shutdown dialog box
 void UI_Shutdown()
-{ u8g2.setDrawColor(1);
+{
+  u8g2.setFont(u8g2_font_crox2h_tr);
+
+  u8g2.setDrawColor(1);
 
   u8g2.setCursor(32 - (u8g2.getStrWidth("Sleep") / 2), 62);
   u8g2.print("Sleep");
@@ -489,6 +546,7 @@ void UI_WifiConf()
 //UI_Reset
 void UI_reset()
 {
+  u8g2.setFont(u8g2_font_crox2h_tr);
   u8g2.setCursor(9, 48);
   u8g2.print("Factory");
   u8g2.setCursor(12, 62);
@@ -499,7 +557,7 @@ void UI_reset()
 //UI Err from Server
 void UI_S_Err()
 {
-   u8g2.drawXBM( 15, 0,add_alert_black_36x36_width, add_alert_black_36x36_height,add_alert_black_36x36_bits);
+  u8g2.drawXBM( 15, 0, add_alert_black_36x36_width, add_alert_black_36x36_height, add_alert_black_36x36_bits);
   err_or._displayErr();
 }
 
@@ -509,8 +567,9 @@ void UI_dripo()
 {
   //digitalWrite(BUZZ_PIN, HIGH);
   //tone(BUZZ_PIN,1000,700);
-  analogWriteFreq(38000);
+  //analogWriteFreq(38000);
   analogWrite(IR_PIN, irAmp);
+  // analogWrite(IR_PIN, 700);
   // u8g2=U8G2_SSD1306_128X64_NONAME_F_3W_SW_SPI (U8G2_R3, /* clock=*/ 1, /* data=*/2, /* cs=*/ U8X8_PIN_NONE);
   //  Wire.beginTransmission(0x20); // transmit to device #20 (0x20)
   //  Wire.write(0x30);// sends instruction byte
@@ -521,12 +580,12 @@ void UI_dripo()
   //  byte MSB = Wire.read();
   //byte LSB = Wire.read();
 
-  if (analogRead(A0) < 512)
+  if (analogRead(A0) < 510 && irAmp < 1014)
   {
     irAmp = irAmp + 5;
   }
 
-  if (analogRead(A0) > 530)
+  if (analogRead(A0) > 528 && irAmp > 0)
   {
     irAmp = irAmp - 5;
   }
@@ -560,9 +619,17 @@ void UI_dripo()
   u8g2.print("Sesnsor Calib:");
   u8g2.setCursor(0, scroller + 142);
   u8g2.print( analogRead(A0));
+  u8g2.setCursor(0, scroller + 154);
+  u8g2.print("IR value");
+  u8g2.setCursor(0, scroller + 166);
+  //u8g2.print(ESP.getFreeSketchSpace());
+  u8g2.print(irAmp);
+  u8g2.setCursor(21, scroller + 166);
+  u8g2.print("/900");
 
+  //u8g2.print(ESP.getResetReason());
 
-  u8g2.setCursor(0, scroller + 160);
+  u8g2.setCursor(0, scroller + 178);
   u8g2.print("---EVELABS---");
 
   //    u8g2.setCursor(32, 40);
@@ -605,9 +672,22 @@ void UI_InfBatChK()
 {
 
   u8g2.setFont(u8g2_font_crox2h_tr);
-  u8g2.drawXBM( 8, 30, batlow_width, batlow_height, batlow_bits);
-  u8g2.setCursor(32 - ( u8g2.getStrWidth("BAT LOW") / 2), 90);
-  u8g2.print("BAT LOW");
+  // u8g2.drawXBM( 8, 30, batlow_width, batlow_height, batlow_bits);
+  u8g2.setCursor(32 - ( u8g2.getStrWidth("Battery") / 2), 20);
+  u8g2.print("Battery");
+  u8g2.setCursor(32 - ( u8g2.getStrWidth("Won't") / 2), 40);
+  u8g2.print("Won't");
+  u8g2.setCursor(32 - ( u8g2.getStrWidth("Last for") / 2), 60);
+  u8g2.print("Last for");
+  u8g2.setCursor(13, 80);
+  u8g2.setFont(u8g2_font_crox2hb_tr);
+  u8g2.print((_dripo.getTtime() / 60));
+  u8g2.setCursor(36, 80);
+  u8g2.print("Hrs");
+  u8g2.setFont(u8g2_font_crox2h_tr);
+
+  // u8g2.setCursor(32 - ( u8g2.getStrWidth("BAT LOW") / 2), 90);
+  //  u8g2.print("BAT LOW");
   dialogbox1.dialog_box("Ok&", 100, 1);
 
 }
@@ -712,11 +792,11 @@ void Off_Infuse()
 
         break;
       case 3: if (vol < 1000) {
-          vol = vol + 50;
+          vol = vol + 25;
         }
         break;
       case 4: if (vol > 50) {
-          vol = vol - 50;
+          vol = vol - 25;
         }
         break;
     }
@@ -841,33 +921,49 @@ void Off_Infuse()
 
         }
         else if (dialogbox.getDia() == "Yes") {
-          if (stateOfCharge > (15 + (_dripo.getTtime() / 12)))
+          EEPROM.begin(512);
+          EEPROM.put(40, _dripo.getDf());
+          EEPROM.commit();
+
+          EEPROM.put(130, _dripo.getTvol());
+          EEPROM.commit();
+
+          EEPROM.put(150, _dripo.getrate2set());
+          EEPROM.commit();
+          //            EEPROM.put(200, 2);    //infusion started and it is not completed
+          //            EEPROM.commit();
+          EEPROM.end();
+          prev_inf_save = 2;
+
+          if (stateOfCharge > (10 * (_dripo.getTtime() / 60)))
           {
 
-
-            EEPROM.begin(512);
-            EEPROM.put(40, _dripo.getDf());
-            EEPROM.commit();
-
-            EEPROM.put(130, _dripo.getTvol());
-            EEPROM.commit();
-
-            EEPROM.put(150, _dripo.getrate2set());
-            EEPROM.commit();
-            EEPROM.put(200, 1);    //infusion started and it is not completed
-            EEPROM.commit();
-            EEPROM.end();
-            //                                    ui_state = 3;   //testing
-            //                                    state = 9;
             //
+            //            EEPROM.begin(512);
+            //            EEPROM.put(40, _dripo.getDf());
+            //            EEPROM.commit();
+            //
+            //            EEPROM.put(130, _dripo.getTvol());
+            //            EEPROM.commit();
+            //
+            //            EEPROM.put(150, _dripo.getrate2set());
+            //            EEPROM.commit();
+            //            //            EEPROM.put(200, 2);    //infusion started and it is not completed
+            //            //            EEPROM.commit();
+            //            EEPROM.end();
+            //            prev_inf_save = 2;
+
+            //                                   ui_state = 3;   //testing
+            //                                  state = 9;
+
             ui_state = 16;
             state = 18;
-            irAmp = 0;
+            irAmp = 350;
 
           }
           else
           {
-
+            irAmp = 350;
             ui_state = 13;
             state = 16;
           }
@@ -895,7 +991,7 @@ void UI_Calib()
   u8g2.print("Calibrating");
   u8g2.setCursor(32 - ( u8g2.getStrWidth("Sensors") / 2), 33);
   u8g2.print("Sensors");
-  if (irAmp > 1020) {
+  if (irAmp == 1020 || irAmp == 0) {
     u8g2.setCursor(32 - ( u8g2.getStrWidth("FAILED!") / 2), 64);
     u8g2.print("FAILED!");
   }

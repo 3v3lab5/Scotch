@@ -19,9 +19,8 @@
 #include "src/MAINMENU.h"
 #include "src/ICON.h"
 #include "src/icons.h"
-//#include "PubSubClient.h"
+#include "PubSubClient.h"
 //#include <WiFiClient.h>
-
 
 //#include "src/Crypto.h"
 //#include "src/Base64.h"
@@ -46,6 +45,8 @@ boolean devAck = false;
 boolean up_date = false;
 String up_status = "Exit";
 
+boolean outofrange = false;
+boolean drop_detect = false;
 int longHoldTime = 2000; // ms hold period: how long to wait for press+hold event
 boolean buttonVal = HIGH; // value read from button
 boolean buttonLast = HIGH; // buffered value of the button's previous state
@@ -53,7 +54,9 @@ long downTime = -1; // time the button was pressed down
 long upTime = -1; // time the button was released
 int debounce = 20; // ms debounce period to prevent flickering when pressing or releasing the button
 boolean longHoldEventPast = false;// whether or not the long hold event happened already
-ESP8266WebServer server(80);
+
+ESP8266WebServer *server;
+
 #define BUZZ_PIN        15
 #define ENCODER_PINA     5
 #define ENCODER_PINB     13
@@ -83,16 +86,19 @@ int qos = 1;
 int radius = 5;
 int connection = 0;
 int  switchon = 1000;
-const char* VERSION = "scotch_V_1.0";
+String VERSION = "scotch_v_1.1";
 String DataStatus = "nill";
 long lastReconnectAttempt = 0;
 unsigned long acktime;
 unsigned long prev_acktime;
 unsigned long alerttime;
 unsigned long prev_alerttime;
+long dcount=0;
 
 int prev_inf = 0;
-unsigned long int logtime = 0;
+int prev_inf_save = 0;
+
+unsigned long int logtime = 1;
 int logstatus = 0;
 
 
@@ -176,7 +182,8 @@ const char* mqtt_channel_ratereq = "dripo/%s/rate_req";                  ///to s
 const char* mqtt_channel_mon = "dripo/%s/mon";                  ///to send start/stop details
 const char* mqtt_channel_log = "dripo/%s/log";                  ///to send err details
 const char* mqtt_channel_will = "dripo/%s/will";                  ///to send will msg
-//const char* mqtt_channel_devack = "dripo/%s/ack_dev";       /// to publish dev ack
+//const char* mqtt_channel_devack = "dripo/%s/ack_dev";
+/// to publish dev ack
 
 const int mqtt_port = 1883;
 //char* mqtt_server = "192.168.0.13";
@@ -202,8 +209,8 @@ ERR_HANDLER _errAlert(u8g2, mqttClient);
 void setup() {
 
   Wire.begin(2, 0);
-  Serial.begin(115200);
-
+  Serial.begin(9600);
+  Serial.setDebugOutput(true);
   Serial.println("boot drip");
 
   EEPROM.begin(512);
@@ -278,19 +285,19 @@ void setup() {
     IPAddress myIP = WiFi.softAPIP(); //Get IP address
     Serial.print("HotSpt IP:");
     Serial.println(myIP);
-
-    server.on("/", handleRoot);      //Which routine to handle at root location
-    server.on("/action", handleResponse);
-    server.begin();                  //Start server
+ server = new ESP8266WebServer(80);
+    server->on("/", handleRoot);      //Which routine to handle at root location
+    server->on("/action", handleResponse);
+    server->begin();                  //Start server
   }
   else {
     WiFi.mode(WIFI_STA);
-   WiFi.begin(wifi_name, wifi_pass);
- // WiFi.begin("EVELABS_TECH", "BQQJUDWB");
+     WiFi.begin(wifi_name, wifi_pass);
+   // WiFi.begin("EVELABS_TECH", "BQQJUDWB");
   }
+  analogWriteFreq(38000);
 
   dpf = MENU("Dpf", od_f, u8g2);
-
 }
 
 
@@ -310,7 +317,9 @@ void loop() {
   DataStatus = send_req(DataStatus);
   yield();
   delay(15);
-  server.handleClient();
+  if (strcmp(hotspot_, "1") == 0) {
+    server->handleClient();
+  }
 }
 
 

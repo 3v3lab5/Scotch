@@ -1,4 +1,4 @@
-/*drop detecton and encoder button detection*/
+ /*drop detecton and encoder button detection*/
 
 void checkButton() {
   const unsigned long LONG_DELTA = 400ul;               // hold seconds for a long press
@@ -79,15 +79,23 @@ void encoder() {
 /*Drop dectection interrupt code*/
 void checkdrop()
 {
-  if (timeElapsed > 200) {  //detect drop id time b/w drops is > 200ms.. to avoid double detection of drops and too limit dectection rate
-    _dripo.setTime(timeElapsed);    //send time b/w drops for calculations
-    logtime = timeElapsed;          // for preclincal studies log each drop
-    logstatus = 1;
+// if (timeElapsed > 200) {  //detect drop id time b/w drops is > 200ms.. to avoid double detection of drops and too limit dectection rate
+//   _dripo.setTime(timeElapsed);    //send time b/w drops for calculations
+logtime = timeElapsed;  // for preclincal studies log each drop
+drop_detect = true;
+////   logstatus = 1;
     timeElapsed = 0;
-    detect1 = 0;                    //  blinker on each drop
+   detect1 = 0;                    //  blinker on each drop
     detect2 = 1;
-  }
-  timeElapsed = 0;
+    dcount++;
+// //   outofrange = false;
+// }
+
+// else {
+//      outofrange = true;
+//  timeElapsed = 0;
+//
+// }
 
 }
 

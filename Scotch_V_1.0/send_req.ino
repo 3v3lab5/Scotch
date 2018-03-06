@@ -66,10 +66,10 @@ String send_req(String Data)
     String medi = _dripo.getMed() + "-" + _dripo.getTimetable() + "-" + Data;
     const char* chr = medi.c_str();
     //   mqttClient.connect(id);
-    sprintf(e_data, "%s-%d-%d-%d-%d", chr, SRate, SIvol, SRtime, Tvol);
+    sprintf(e_data, "%s-%d-%d-%d-%d-%d", chr, SRate, SIvol, SRtime, Tvol,stateOfCharge);
     sprintf(pat_channel, mqtt_channel_mon, id);
 
-    mqttClient.publish(pat_channel, e_data, true);
+    mqttClient.publish(pat_channel, e_data);
     return "nill";
   }
 
@@ -90,9 +90,9 @@ String send_req(String Data)
     String medi = _dripo.getMed() + "-" + _dripo.getTimetable() + "-" + Data;
     const char* chr = medi.c_str();
     //   mqttClient.connect(id);
-    sprintf(e_data, "%s-%d-%d-%d-%d", chr, SRate, SIvol, SRtime, Tvol);
+    sprintf(e_data, "%s-%d-%d-%d-%d-%d", chr, SRate, SIvol, SRtime, Tvol,stateOfCharge);
     sprintf(pat_channel, mqtt_channel_mon, id);
-    mqttClient.publish(pat_channel, e_data, true);
+    mqttClient.publish(pat_channel, e_data);
     return "nill";
   }
 
@@ -105,12 +105,12 @@ String send_req(String Data)
   // return "nill";
   //    }
 
-  else if (Data == "ver")
-  {
-    sprintf(version_channel, mqtt_channel_myversion, id);
-    mqttClient.publish(version_channel, VERSION);
-    return "nill";
-  }
+//  else if (Data == "ver")
+//  {
+//    sprintf(version_channel, mqtt_channel_myversion, id);
+//    mqttClient.publish(version_channel, VERSION);
+//    return "nill";
+//  }
 
 }
 

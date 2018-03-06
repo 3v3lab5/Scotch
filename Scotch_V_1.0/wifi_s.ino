@@ -67,17 +67,17 @@ mqttClient.loop();
 
 
 void handleRoot() {
-  server.send(200, "text/html", "<body style='background:#ff4081;margin:0px'><form action='/action'> <br>Wifi<br><input type='text' name='WiFi' value='SSID'><br>Password<br><input type='password' name='pass' value='pass'><br>IP Address<br><input type='text' name='IP Address' value='mqtt'><br><br><input type='submit' value='Submit'></form></body>");
+  server->send(200, "text/html", "<body style='background:#ff4081;margin:0px'><form action='/action'> <br>Wifi<br><input type='text' name='WiFi' value='SSID'><br>Password<br><input type='password' name='pass' value='pass'><br>IP Address<br><input type='text' name='IP Address' value='mqtt'><br><br><input type='submit' value='Submit'></form></body>");
 }
 
 void handleResponse() {
-  String wifi_n = server.arg(0);
-  String wifi_p = server.arg(1);
-  String mqtt_ = server.arg(2);
+  String wifi_n = server->arg(0);
+  String wifi_p = server->arg(1);
+  String mqtt_ = server->arg(2);
   wifi_n.toCharArray(wifi_name, 20);
   wifi_p.toCharArray(wifi_pass, 20);
   mqtt_.toCharArray(mqtt_server, 16);
- server.send(200, "text/html", "SUCCESS");
+ server->send(200, "text/html", "SUCCESS");
   EEPROM.begin(512);
   EEPROM.put(0, mqtt_server);
   EEPROM.commit();
@@ -88,7 +88,7 @@ EEPROM.commit();
   EEPROM.put(270, "0");
   EEPROM.commit();
   EEPROM.end();
-  server.stop();
+  server->stop();
   ESP.restart();
 
 }

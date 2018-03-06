@@ -3,7 +3,7 @@
 
 
 
-bool ERR_HANDLER::display_err(String Ttab, int alt, bool ack_dev, bool ack_sta,char id[30],String med,int rate,int infvol,int rtime,int tvol)
+bool ERR_HANDLER::display_err(String Ttab, int alt, bool ack_dev, bool ack_sta,char id[30],String med,int rate,int infvol,int rtime,int tvol,int mqttmode,int batc)
 {
 	STA_ACK=ack_sta;
 	DEV_ACK=ack_dev;
@@ -14,7 +14,9 @@ bool ERR_HANDLER::display_err(String Ttab, int alt, bool ack_dev, bool ack_sta,c
 	INFVOL=infvol;
 	RTIME=rtime;
 	TVOL=tvol;
-	_Timetable=Ttab;	
+	_Timetable=Ttab;
+        mode = mqttmode;
+        batchrge = batc;	
 
 	if(DEV_ACK==true)
 	{
@@ -228,20 +230,21 @@ void ERR_HANDLER::err_alerttype2()
 //function to publish error
 void ERR_HANDLER::mqttsenderror(char errortype[20])
 {
-
+if(mode==1)
+{
 	char e_data[80];
 	String medi=MED+"-"+_Timetable+"-"+errortype;
 	  const char* chr = medi.c_str();
-	  sprintf(e_data,"%s-%d-%d-%d-%d",chr,RATE,INFVOL,RTIME,TVOL);
+	  sprintf(e_data,"%s-%d-%d-%d-%d-%d",chr,RATE,INFVOL,RTIME,TVOL,batchrge);
 	    if (mqttclnt.connected()) 
 	    {
 
 		const char* mqtt_channel_error="dripo/%s/mon";
 		char error_channel[80];
 	    	sprintf(error_channel,mqtt_channel_error,ID);
-	    	mqttclnt.publish(error_channel, e_data,true);
+	    	mqttclnt.publish(error_channel, e_data);
 		}
-	      
+}	      
 }
 
 

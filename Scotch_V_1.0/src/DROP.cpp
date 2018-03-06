@@ -44,10 +44,10 @@ void DROP::setDcount(long dcount)
     _Dcount = dcount;
 }
 //fuction gets the Elapsed time btwn drops from the interrupt nd it incriment the no of drops
-void DROP::setTime(unsigned long int drip_time)
+void DROP::setTime(unsigned long int drip_time,long d_count)
 {
     _Etime = drip_time;
-    _Dcount++;
+    _Dcount=d_count;
     _rate = (long)60000 / _Etime;
     newrate = movingAvg.process(_rate);
     if (_Etime < 1000) {
@@ -113,8 +113,10 @@ void DROP::setAlrt(String alt)
 int DROP::MonRate()
 {
     int err;
+    int mon_rang = map(getR2setDPM(),5,250,10,5);
+     mon_rang = getR2setDPM()*mon_rang/100;
     err = getR2setDPM() - _rate;
-    if (abs(err) < MON_RANGE) {
+    if (abs(err) < mon_rang) {
 	if ((_Dcount - _setCount) >= 3) /// checks for 3 consecutive drops
 	{
 	    return 1;
@@ -196,48 +198,54 @@ int DROP::getDf()
 //To find Remaining time for infusion
 int DROP::getRtime()
 {
-    if (_Infvol < _Tvol) {
-	_rTime = ((float)(_Tvol - _Infvol) / _rate) * 60;
+    if ((getvolInf() < getTvol()) && getRateMl() > 0) {
+	_rTime = ((float)(getTvol() - getvolInf()) / getRateMl()) * 60;
 	return _rTime;
     } else {
 	return 0;
     }
 }
 
-//To find Rate at which to be alerted in ml/hr
+//To find Rate at which to be alerted in dpm
 int DROP::getAlertPercent()
 {
-    return (getrate2set() * ALERT_PERCENT);
+	float rate_errp = map(getR2setDPM(),5,300,20,10);
+   // return (getrate2set() * ALERT_PERCENT);
+   return(getR2setDPM() * rate_errp/100);
 }
 
-//To find Rate at which to be alerted in  dpm
+//To find no of drops at which to be alerted in  dpm
 int DROP::getAlertDrops()
 {
-    return (getR2setDPM() * ALERT_PERCENT);
+	float rate_eerp = map(getR2setDPM(),5,250,20,10);
+//    return (getR2setDPM() * ALERT_PERCENT);
+   return(getR2setDPM() * rate_eerp/100);
 }
 //To find Total Time for infusion
 int DROP::getTtime()
 {
-    _tTime = ((float)(_Tvol) / _rate2set) * 60;
+    _tTime = ((float)(getTvol() / _rate2set)) * 60;
     return _tTime;
 }
 //Get Different type of Alerts
 int DROP::Alert(unsigned long int _time)
 {
     int err;
-    err = getrate2set() - _rate_ml;
+    int errtime;
+    err = getR2setDPM() - _rate;
     _LastEtime = _time;
-    if (_LastEtime > (10 * _Etime) && getinfPercent() < 93) {
+    errtime = map(_rate,1,300,2,40);
+    if (_LastEtime > (errtime * _Etime) && getinfPercent() < 96) {
 	_monCount = _Dcount;
 	return BLOCK;
     }
 
-    else if (_LastEtime > (10 * _Etime) && getinfPercent() >= 93) {
+    else if (_LastEtime > (10 * _Etime) && getinfPercent() >= 96) {
 	_monCount = _Dcount;
 	return EMPTY;
     }
 
-    else if (abs(err) > getAlertPercent() && getinfPercent() > 2 && getinfPercent() < 93) {
+    else if (abs(err) > getAlertPercent() && getvolInf() > 5 && getinfPercent() < 96) {
 
 	if ((_Dcount - _monCount) > getAlertDrops()) {
 
@@ -250,7 +258,7 @@ int DROP::Alert(unsigned long int _time)
 	}
     }
 
-    else if (getinfPercent() >= 94) {
+    else if (getinfPercent() >= 96) {
 	_monCount = _Dcount;
 	return COMPLETED;
     } else {

@@ -40,7 +40,7 @@ unsigned long int  _LastEtime;
 DROP();
 ~DROP();
 void setDcount(long);
-void setTime(unsigned long int);
+void setTime(unsigned long int,long);
 int getRate();
 int  getRateMl();
 int getvolInf();

@@ -10,19 +10,21 @@ boolean mqtt_reconnect() {
   sprintf(will_msg, mqtt_channel_will, id);
 
   
-char data[]="offline";
+char data[30]="offline";
 //   mqtt_encrypt(data); 
   
   if (mqttClient.connect(id,will_msg,2,true,data)) {                         // connect to mosqutto server and checks the connection
     yield();
 
-    
-    strcpy(data,"Online");    
+String Status = "Online-"+ESP.getResetReason();
+ const char* chr = Status.c_str(); 
+
+
 //     mqtt_encrypt(data); 
 
     // sprintf(up_channel, mqtt_channel_update, id);
     // mqttClient.subscribe(up_channel);
-    mqttClient.publish(will_msg,data,true);                  // publishes the device status to chennel 
+    mqttClient.publish(will_msg,chr,true);                  // publishes the device status to chennel 
 
     //create subscrbe channels
     sprintf(r_channel_df, mqtt_channel_df, id);        

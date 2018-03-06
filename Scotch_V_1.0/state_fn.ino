@@ -41,7 +41,7 @@ void menu_1()
 {
   analogWrite(IR_PIN, 0);
   digitalWrite(BUZZ_PIN, LOW);
-  if (prev_inf == 1 && WiFi.status() == WL_CONNECTED && mqttClient.connected() == true)
+  if ((prev_inf == 1 && WiFi.status() == WL_CONNECTED  && mqttClient.connected() == true) || prev_inf == 2)
   {
 
     _dripo.setR2set(String(R2set_eeprom)); //save rate to set
@@ -49,13 +49,14 @@ void menu_1()
     _dripo.setTvol(String(tvol_eeprom));
     _dripo.setMed(String(med_eep));
     _dripo.setTimetable(String(timet_eep));
-    _dripo.setDcount(dcount_eep);
+   // _dripo.setDcount(dcount_eep);
+   dcount=dcount_eep;   
 
     //    ui_state = 3;   //testing
     //    state = 9;
     //    MonState = 3;
 
-
+    prev_inf_save = prev_inf;
     ui_state = 16;
     state = 18;
 
@@ -130,7 +131,10 @@ void reset_menu()
         EEPROM.end();
         delay(250);
         wifi_status = 3;
+         ESP.restart();
+
       }
+
       break;
     case 3: dialogbox._diaup();
       break;
@@ -197,6 +201,7 @@ void M_setup()
       else  if (Setup.getSelect() == "update") {
         ui_state = 5;
         state = 8;
+        //wifi_status = 4;  //test
       }
       break;
     case 3: Setup.up();
@@ -241,55 +246,83 @@ void M_pwroff()
 
 void update_dripo()
 {
+  // ESPhttpUpdate.rebootOnUpdate(false);
   if (up_date == true)
   {
-    t_httpUpdate_return ret = ESPhttpUpdate.update(mqtt_server, 3000, "/update_dripo", VERSION);
-    if (ret == HTTP_UPDATE_FAILED)
-    {
-      up_status = "failed";
 
+    //ESP.wdtFeed();
+    t_httpUpdate_return ret = ESPhttpUpdate.update(mqtt_server, 3000, "/update_dripo?v=" + VERSION);
+    // t_httpUpdate_return ret = ESPhttpUpdate.update("http://192.168.0.14:3000/update_dripo");
+    //ESPhttpUpdate.update("192.168.0.27", 3000, "/update_dripo");
+    //ESPhttpUpdate.update("192.168.1.3", 3000, "/update_dripo");
+    //t_httpUpdate_return ret = ESPhttpUpdate.update("http://evelabs.co/Drip0.ino.nodemcu.bin");
+    switch (ret) {
+      case HTTP_UPDATE_FAILED:
+        up_status = "failed";
+        up_date = false;
+        break;
+
+      case HTTP_UPDATE_NO_UPDATES:
+        up_status = "no update";
+        up_date = false;
+        break;
+
+      case HTTP_UPDATE_OK://ESP.reset();
+        break;
     }
-    else if (ret == HTTP_UPDATE_NO_UPDATES)
-    {
-      up_status = "no update";     
-
-
-    }
+    //    if (ret == HTTP_UPDATE_FAILED)
+    //    {
+    //      up_status = "failed";
+    //up_date = false;
+    //    }
+    //    else if (ret == HTTP_UPDATE_NO_UPDATES)
+    //    {
+    //      up_status = "no update";
+    //      up_date = false;
+    //
+    //
+    //
+    //    }
 
 
   }
 
 
-    switch (get_button()) {
+  switch (get_button()) {
 
-      case 1:
+    case 1:
 
-        state = 6;
-        ui_state = 7;
-        up_date = false;
-        up_status = "Exit";
+      state = 6;
+      ui_state = 7;
+      up_date = false;
+      up_status = "Exit";
 
-
-        break;
-    }
-  
-
-  switch (checkLongHold())
-  {
-
-    case 5:
-      up_date = true;
-      up_status = "updating";
 
       break;
+  }
+
+  if (up_date == false && up_status == "Exit") {
+    switch (checkLongHold())
+    {
+
+      case 5:
+        up_date = true;
+        up_status = "updating";
+
+        break;
 
 
+    }
   }
 }
 
 void Sho_Rate()
 {
-
+ if (logtime > 200&&drop_detect==true) {  //detect drop id time b/w drops is > 200ms.. to avoid double detection of drops and too limit dectection rate
+   _dripo.setTime(logtime,dcount);    //send time b/w drops for calculations
+    drop_detect=false;
+ //   outofrange = false;
+ }
 
   if (_dripo.MonRate() == 1 && MonState == 0)
   {
@@ -328,11 +361,14 @@ void Sho_Rate()
         }
         else if (dialogbox.getDia() == "Yes") {
           EEPROM.begin(512);
-          EEPROM.put(200, 1);    //infusion started and it is not completed
+          EEPROM.put(200, prev_inf_save);    //infusion started and it is not completed
           EEPROM.commit();
           EEPROM.end();
           MonState = 3;
-          DataStatus = "start";
+          if ( prev_inf_save == 1)
+          {
+            DataStatus = "start";
+          }
         }
         break;
       case 3: dialogbox._diaup();
@@ -355,15 +391,15 @@ void Sho_Rate()
           EEPROM.put(200, 0);    //no prev infusions pending
           EEPROM.commit();
           EEPROM.end();
-          prev_inf = 0;
 
           // dpf->~MENU();
           // delete dpf;
           //MENU *dpf= new MENU;
-          //  if (PMonState == 3)
-          //   {
-          DataStatus = "stop";
-          //   }
+          if ( prev_inf_save == 1)
+          {
+            DataStatus = "stop";
+          }
+          prev_inf = 0;
           state = 2;
           ui_state = 2;
           infuseMenu = 1;
@@ -403,6 +439,12 @@ void WifiConf()
 
 void Sleep()
 {
+  if (logtime > 200&&drop_detect==true&&prev_state==9) {  //detect drop id time b/w drops is > 200ms.. to avoid double detection of drops and too limit dectection rate
+   _dripo.setTime(logtime,dcount);    //send time b/w drops for calculations
+    drop_detect=false;
+ //   outofrange = false;
+ }
+ 
   idle_time = 0;
   u8g2.setPowerSave(1);
   if (sleeper == false)
@@ -415,8 +457,8 @@ void Sleep()
   switch (get_button())
   {
     case 1: u8g2.setPowerSave(0);
-      idle_time = 0;
       sleeper = false;
+      idle_time = 0;
       state = prev_state;
       break;
     case 3: u8g2.setPowerSave(0);
@@ -448,15 +490,15 @@ void Developer()
       break;
 
 
-    case 3:if(scroller<0)
+    case 4: if (scroller < 0)
       {
-      scroller = scroller + 5;
-       }
+        scroller = scroller + 5;
+      }
       break;
-    case 4: if(scroller>-40)
-       {
-      scroller = scroller - 5;
-       }
+    case 3: if (scroller > -60)
+      {
+        scroller = scroller - 5;
+      }
       break;
   }
 
@@ -469,9 +511,9 @@ void ServErr()
   switch (get_button())
   {
     case 1: //if (dialogbox.getDia() == "Ok") {
-        state = 19;
-        ui_state = 19;
-        break;
+      state = 19;
+      ui_state = 19;
+      break;
 
       //}
 
@@ -501,6 +543,8 @@ void Infbatchk()
     case 1: if (dialogbox1.getDia() == "Ok") {
         ui_state = 16;
         state = 18;
+        irAmp = 0;
+
       }
       break;
   }
@@ -519,20 +563,20 @@ void Batchk()
 void SensorCalib()
 {
 
-  analogWriteFreq(38000);
+  //  analogWriteFreq(38000);
   analogWrite(IR_PIN, irAmp);
-  if (analogRead(A0) < 512)
+  if (analogRead(A0) < 510 && irAmp < 1014)
   {
     irAmp = irAmp + 10;
   }
 
-  else if (analogRead(A0) > 530)
+  else if (analogRead(A0) > 526 && irAmp > 0)
   {
     irAmp = irAmp - 5;
   }
-  else {
+  else if (analogRead(A0) > 510 && analogRead(A0) < 526) {
 
-    if (prev_inf == 1 )
+    if (prev_inf == 1 || prev_inf == 2)
     {
       ui_state = 3;   //testing
       state = 9;
@@ -545,7 +589,7 @@ void SensorCalib()
 
   }
 
-  switch (get_button())    /// detect button press. exit frm hotspot if button press is detected
+  switch (get_button())    /// detect button press.
   {
     case 1:
       EEPROM.begin(512);
@@ -555,7 +599,7 @@ void SensorCalib()
       EEPROM.end();
       state = 2;
       ui_state = 2;
-
+      irAmp = 350;
       break;
   }
 }
@@ -573,6 +617,7 @@ void OnOfselect()
 
         if (WiFi.status() == WL_CONNECTED)
         { if (mqttClient.connected()) {
+          dcount=0;
             DataStatus = "bed";
             //           state = 5;
 
@@ -589,6 +634,7 @@ void OnOfselect()
         }
       }
       else  if (select.getSelect() == "OFFLINE") {
+        dcount=0;
         Of_infuseMenu = 0;
         state = 12;
         ui_state = 18;
