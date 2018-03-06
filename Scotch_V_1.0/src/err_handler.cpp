@@ -25,13 +25,13 @@ bool ERR_HANDLER::display_err(String Ttab, int alt, bool ack_dev, bool ack_sta,c
 		return false;
 
 	}
-	 if(STA_ACK==false&&DEV_ACK==false)
+      else if(STA_ACK==false&&DEV_ACK==false)
 		{
 
 			err_alerttype1();
 			return false;
 		}
-	 if(STA_ACK==true&&DEV_ACK==false)
+	else if(STA_ACK==true&&DEV_ACK==false)
 	 {
 	 		err_alerttype2();
 	 		return false;

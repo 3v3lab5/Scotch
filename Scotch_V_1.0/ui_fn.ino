@@ -42,12 +42,12 @@ void UI_Rate()
 
   //analogWriteFreq(38000);           ///set ir frequency to 38khz
   analogWrite(IR_PIN, irAmp);       // Start Ir
-  if (analogRead(A0) < 510 && irAmp < 1014)
+  if (analogRead(A0) < 505 && irAmp < 1014)
   {
     irAmp = irAmp + 1;
   }
 
-  else if (analogRead(A0) > 526 && irAmp > 0)
+  else if (analogRead(A0) > 535 && irAmp > 0)
   {
     irAmp = irAmp - 1;
   }
@@ -127,14 +127,14 @@ void UI_Rate()
     altmsg = _dripo.Alert(timeElapsed);    //alert msg is created using the time elapsed btween drops
 
 
-    //store drop count every 15 drops
-    if (_dripo.getDcount() % 15 == 0)
-    {
-      EEPROM.begin(512);
-      EEPROM.put(180, _dripo.getDcount());
-      EEPROM.commit();
-      EEPROM.end();
-    }
+    //store drop count every 150 drops
+//    if (_dripo.getDcount() % 150 == 0)
+//    {
+//      EEPROM.begin(512);
+//      EEPROM.put(180, _dripo.getDcount());
+//      EEPROM.commit();
+//      EEPROM.end();
+//    }
     if (altmsg == NO_ERR || devAck == true)
     {
 
@@ -454,13 +454,13 @@ void UI_infuse()
             //            prev_inf_save = 1;
             //                        ui_state = 3;   //testing
             //                        state = 9;
-            irAmp = 350;
+            irAmp = 450;
             ui_state = 16;
             state = 18;
           }
           else
           {
-            irAmp = 350;
+            irAmp = 450;
             ui_state = 13;
             state = 16;
           }
@@ -580,12 +580,12 @@ void UI_dripo()
   //  byte MSB = Wire.read();
   //byte LSB = Wire.read();
 
-  if (analogRead(A0) < 510 && irAmp < 1014)
+  if (analogRead(A0) < 505 && irAmp < 1014)
   {
     irAmp = irAmp + 5;
   }
 
-  if (analogRead(A0) > 528 && irAmp > 0)
+  if (analogRead(A0) > 525 && irAmp > 0)
   {
     irAmp = irAmp - 5;
   }
@@ -958,12 +958,12 @@ void Off_Infuse()
 
             ui_state = 16;
             state = 18;
-            irAmp = 350;
+            irAmp = 450;
 
           }
           else
           {
-            irAmp = 350;
+            irAmp = 450;
             ui_state = 13;
             state = 16;
           }

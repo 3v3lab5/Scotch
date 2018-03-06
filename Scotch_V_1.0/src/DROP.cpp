@@ -49,10 +49,10 @@ void DROP::setTime(unsigned long int drip_time,long d_count)
     _Etime = drip_time;
     _Dcount=d_count;
     _rate = (long)60000 / _Etime;
-    newrate = movingAvg.process(_rate);
-    if (_Etime < 1000) {
-	_rate = newrate;
-    }
+//    newrate = movingAvg.process(_rate);
+//    if (_Etime < 1000) {
+//	_rate = newrate;
+ //   }
 }
 
 //Set drop factor of the drip set

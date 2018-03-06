@@ -543,7 +543,7 @@ void Infbatchk()
     case 1: if (dialogbox1.getDia() == "Ok") {
         ui_state = 16;
         state = 18;
-        irAmp = 0;
+        irAmp = 450;
 
       }
       break;
@@ -565,16 +565,16 @@ void SensorCalib()
 
   //  analogWriteFreq(38000);
   analogWrite(IR_PIN, irAmp);
-  if (analogRead(A0) < 510 && irAmp < 1014)
+  if (analogRead(A0) < 505 && irAmp < 1014)
   {
-    irAmp = irAmp + 10;
+    irAmp = irAmp + 5;
   }
 
-  else if (analogRead(A0) > 526 && irAmp > 0)
+  else if (analogRead(A0) >= 535 && irAmp > 0)
   {
     irAmp = irAmp - 5;
   }
-  else if (analogRead(A0) > 510 && analogRead(A0) < 526) {
+   if (analogRead(A0) >= 505 && analogRead(A0) < 535) {
 
     if (prev_inf == 1 || prev_inf == 2)
     {
@@ -599,7 +599,7 @@ void SensorCalib()
       EEPROM.end();
       state = 2;
       ui_state = 2;
-      irAmp = 350;
+      irAmp = 450;
       break;
   }
 }
