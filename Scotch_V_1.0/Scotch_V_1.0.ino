@@ -94,6 +94,7 @@ unsigned long prev_acktime;
 unsigned long alerttime;
 unsigned long prev_alerttime;
 long dcount=0;
+unsigned int lastmillis;
 
 int prev_inf = 0;
 int prev_inf_save = 0;
@@ -255,7 +256,7 @@ void setup() {
   pinMode(DROP_PIN, INPUT_PULLUP);
   analogWrite(WAKE_PIN, switchon);
 
-  attachInterrupt(digitalPinToInterrupt(ENCODER_BTN), checkButton, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(ENCODER_BTN), checkButton, RISING);
 
   attachInterrupt(digitalPinToInterrupt(DROP_PIN), checkdrop, HIGH);
 
