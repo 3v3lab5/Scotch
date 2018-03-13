@@ -80,6 +80,7 @@ void ERR_HANDLER::err_alerttype1()
   					 delayMicroseconds(500);
 				}
 					delay(200);
+					yield();
 			for (long i = 0; i < 250; i++ )
 				{
   					  digitalWrite(15, HIGH);
@@ -88,6 +89,7 @@ void ERR_HANDLER::err_alerttype1()
   					 delayMicroseconds(500);
 				}
 			delay(200);
+			yield();
 			for (long i = 0; i < 250; i++ )
 				{
   					  digitalWrite(15, HIGH);
@@ -96,6 +98,7 @@ void ERR_HANDLER::err_alerttype1()
   					 delayMicroseconds(500);
 				}
 					mqttsenderror("Block");
+					yield();
 				      wasExecuted1=true;
 															
 					}
@@ -118,6 +121,7 @@ void ERR_HANDLER::err_alerttype1()
   					 delayMicroseconds(500);
 				}
 								delay(200);
+								yield();
 							for (long i = 0; i < 250; i++ )
 				{
   					  digitalWrite(15, HIGH);
@@ -126,6 +130,7 @@ void ERR_HANDLER::err_alerttype1()
   					 delayMicroseconds(500);
 				}
 							delay(200);
+							yield();
 							for (long i = 0; i < 250; i++ )
 				{
   					  digitalWrite(15, HIGH);
@@ -134,6 +139,7 @@ void ERR_HANDLER::err_alerttype1()
   					 delayMicroseconds(500);
 				}
 						mqttsenderror("Empty");
+						yield();
 					wasExecuted2=true;}	
 				}
 			else if(ERR==406)
@@ -154,6 +160,7 @@ void ERR_HANDLER::err_alerttype1()
   					 delayMicroseconds(500);
 				} 
 						delay(200);
+						yield();
 						for (long i = 0; i < 250; i++ )
 				{
   					  digitalWrite(15, HIGH);
@@ -161,7 +168,8 @@ void ERR_HANDLER::err_alerttype1()
    					digitalWrite(15, LOW);
   					 delayMicroseconds(500);
 				}
-							mqttsenderror("Rate_Err");
+				       mqttsenderror("Rate_Err");
+				       yield();
 					wasExecuted3=true;}
 				}
 			else if(ERR==101)
@@ -175,6 +183,7 @@ void ERR_HANDLER::err_alerttype1()
 				
 					if(wasExecuted4==false){
 					mqttsenderror("Complete");
+					yield();
                                         wasExecuted4=true;}
 				}
 }
@@ -244,6 +253,7 @@ if(mode==1)
 	    	sprintf(error_channel,mqtt_channel_error,ID);
 	    	mqttclnt.publish(error_channel, e_data);
 		}
+	    yield();
 }	      
 }
 
@@ -255,22 +265,26 @@ void ERR_HANDLER::err_alerttype3()
 				{
 				
 					mqttsenderror("Block_ACK");
+					yield();
 			
 				}
 			else if(ERR==404)
 				{
 				
 					mqttsenderror("Empty_ACK");
+					yield();
 				}
 			else if(ERR==406)
 				{
 			
 					mqttsenderror("Rate_Err_ACK");
+					yield();
 				}
 			else if(ERR==101)
 				{
 				
 					mqttsenderror("Complete_ACK");
+					yield();
 				}
 
 

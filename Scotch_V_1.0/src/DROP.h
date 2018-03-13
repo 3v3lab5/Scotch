@@ -31,6 +31,7 @@ int _rTime;
 int _tTime;
 int _monCount;
 int _setCount;
+boolean setCount;
 
 public:
 long _rate;

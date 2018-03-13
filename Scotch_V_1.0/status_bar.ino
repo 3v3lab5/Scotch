@@ -3,6 +3,7 @@ void STBAR()
   ESP.wdtFeed();
   if (state == 2 || state == 9 || state == 7 || state == 10 || state == 17) {
      stateOfCharge = batteryMonitor.getSoC();
+     yield();
     float  widthCharge = map(stateOfCharge, 0, 100, 1, 7.5);
     u8g2.drawXBM(42, 0, battery_width, battery_height, battery_bits);
     for(float i=0;i<=widthCharge;i++)
@@ -12,6 +13,7 @@ void STBAR()
 //    u8g2.drawBox(44, 5, widthCharge, 5);
     
     wifirssi = WiFi.RSSI();
+    yield();
     int  widthwifi = map(wifirssi, -90, -30, 1,4);
     if (WiFi.status() == WL_CONNECTED)
     {

@@ -9,7 +9,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
   if (strcmp((char*)topic, r_channel_df) == 0)
   {
     char *d_f = (char*)payload;
-    dpf = MENU ("Dpf", d_f, u8g2);            //create drop factor list
+    dpf = MENU ("Dpf", d_f, u8g2); //create drop factor list
     infuseMenu = 0;                            // move to df menu when list is created
 
 

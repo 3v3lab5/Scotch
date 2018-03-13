@@ -19,6 +19,7 @@ mqttClient.loop();
     if ( WiFi.status() == WL_CONNECTED && strcmp(mqtt_server, "0") != 0) {
       if (!mqttClient.connected()) {
         mqtt_reconnect();
+        yield();
 
       }
     }
@@ -31,6 +32,7 @@ mqttClient.loop();
     // ESP.wdtFeed();
 
     if ( WiFi.status() == WL_CONNECTED && strcmp(mqtt_server, "0") != 0 ) {
+      yield();
       if (!mqttClient.connected()) {
         long now = millis();
         if (now - lastReconnectAttempt > 5000 && connection < 2) {

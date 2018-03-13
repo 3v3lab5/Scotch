@@ -4,7 +4,7 @@ boolean mqtt_reconnect() {
 //
   mqttClient.setServer(mqtt_server, mqtt_port);         //mosquitto server and port is initilized
  mqttClient.setCallback(callback);      // callback fuction for mosquitto is initilzed. this fuction is called when a message is recieved
-
+yield();
  //  mqttClient.connect("sanjai");
 
   sprintf(will_msg, mqtt_channel_will, id);

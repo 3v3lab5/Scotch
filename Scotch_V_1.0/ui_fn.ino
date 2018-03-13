@@ -125,16 +125,9 @@ void UI_Rate()
   //monitoring state
   else if (MonState == 3) {
     altmsg = _dripo.Alert(timeElapsed);    //alert msg is created using the time elapsed btween drops
+    yield();
 
 
-    //store drop count every 150 drops
-//    if (_dripo.getDcount() % 150 == 0)
-//    {
-//      EEPROM.begin(512);
-//      EEPROM.put(180, _dripo.getDcount());
-//      EEPROM.commit();
-//      EEPROM.end();
-//    }
     if (altmsg == NO_ERR || devAck == true)
     {
 
@@ -143,9 +136,20 @@ void UI_Rate()
         devAck = false;
         staAck = false;
 
-        if (ticker_reached && prev_inf_save == 1) {
+        if (ticker_reached ) {
 
-          sendRate();
+          EEPROM.begin(512);
+          EEPROM.put(180, _dripo.getDcount());
+          EEPROM.commit();
+          EEPROM.end();
+          yield();
+
+          if (prev_inf_save == 1) {
+
+            sendRate();
+            yield();
+          }
+
         }
       }
 
@@ -196,6 +200,7 @@ void UI_Rate()
         }
       }
       sleeper = _errAlert.display_err(_dripo.getTimetable(), altmsg, devAck, staAck, id, _dripo.getMed(), _dripo.getRateMl(), _dripo.getvolInf(), _dripo.getRtime(), _dripo.getTvol(), prev_inf_save, stateOfCharge);
+      yield();
       // if(callerrhandlerflag==true)
       // {
       //     sleeper=_errAlert.display_err(altmsg,devAck,staAck,id,_dripo.getMed());
@@ -225,7 +230,7 @@ void UI_Rate()
           }
           else {
             sleeper = _errAlert.display_err(_dripo.getTimetable(), altmsg, devAck, staAck, id, _dripo.getMed(), _dripo.getRateMl(), _dripo.getvolInf(), _dripo.getRtime(), _dripo.getTvol(), prev_inf_save, stateOfCharge);
-
+              yield();
             PMonState = MonState;
             MonState = 0;
           }

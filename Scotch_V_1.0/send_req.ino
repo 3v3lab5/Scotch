@@ -20,6 +20,7 @@ String send_req(String Data)
     sprintf(e_data, "%s", chr);
     sprintf(pat_channel, mqtt_channel_req, id);
     mqttClient.publish(pat_channel, chr);
+    yield();
     return "nill";
   }
 
@@ -28,6 +29,7 @@ String send_req(String Data)
     //   mqttClient.connect(id);
     sprintf(pat_channel, mqtt_channel_bedreq, id);
     mqttClient.publish(pat_channel, "bed");
+        yield();
     return "nill";
   }
   else if (Data == "med")
@@ -37,6 +39,7 @@ String send_req(String Data)
     //   mqttClient.connect(id);
     sprintf(pat_channel, mqtt_channel_medreq, id);
     mqttClient.publish(pat_channel, chr);
+        yield();
     return "nill";
   }
   else if (Data == "rate")
@@ -47,6 +50,7 @@ String send_req(String Data)
     //   mqttClient.connect(id);
     sprintf(pat_channel, mqtt_channel_ratereq, id);
     mqttClient.publish(pat_channel, chr);
+        yield();
     return "nill";
   }
 
@@ -70,6 +74,7 @@ String send_req(String Data)
     sprintf(pat_channel, mqtt_channel_mon, id);
 
     mqttClient.publish(pat_channel, e_data);
+        yield();
     return "nill";
   }
 
@@ -93,6 +98,7 @@ String send_req(String Data)
     sprintf(e_data, "%s-%d-%d-%d-%d-%d", chr, SRate, SIvol, SRtime, Tvol,stateOfCharge);
     sprintf(pat_channel, mqtt_channel_mon, id);
     mqttClient.publish(pat_channel, e_data);
+        yield();
     return "nill";
   }
 

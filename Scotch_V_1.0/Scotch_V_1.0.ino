@@ -93,6 +93,7 @@ unsigned long acktime;
 unsigned long prev_acktime;
 unsigned long alerttime;
 unsigned long prev_alerttime;
+unsigned int lastmillis;
 long dcount=0;
 
 int prev_inf = 0;

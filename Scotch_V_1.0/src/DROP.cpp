@@ -49,10 +49,16 @@ void DROP::setTime(unsigned long int drip_time,long d_count)
     _Etime = drip_time;
     _Dcount=d_count;
     _rate = (long)60000 / _Etime;
-//    newrate = movingAvg.process(_rate);
-//    if (_Etime < 1000) {
-//	_rate = newrate;
- //   }
+    newrate = movingAvg.process(_rate);
+    if (_Etime < 1000) {
+	_rate = newrate;
+    }
+    if(setCount==false)
+    {
+	    _monCount=_Dcount;
+	    _LastEtime=_Etime;
+	    setCount=true;
+    }
 }
 
 //Set drop factor of the drip set
@@ -217,9 +223,9 @@ int DROP::getAlertPercent()
 //To find no of drops at which to be alerted in  dpm
 int DROP::getAlertDrops()
 {
-	float rate_eerp = map(getR2setDPM(),5,250,20,10);
+	int rate_eerp = map(getR2setDPM(),5,300,15,300);
 //    return (getR2setDPM() * ALERT_PERCENT);
-   return(getR2setDPM() * rate_eerp/100);
+   return(rate_eerp);
 }
 //To find Total Time for infusion
 int DROP::getTtime()
@@ -285,6 +291,7 @@ DROP::DROP()
     _rate = 1;
     _Etime = 1;
     _LastEtime = 1;
+    setCount= false;
 }
 //default Distructor
 DROP::~DROP()
