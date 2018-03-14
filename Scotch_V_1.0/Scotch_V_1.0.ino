@@ -44,6 +44,8 @@ boolean staAck = false;
 boolean devAck = false;
 boolean up_date = false;
 String up_status = "Exit";
+boolean writeEprom = false;
+
 
 boolean outofrange = false;
 boolean drop_detect = false;
@@ -87,7 +89,7 @@ int radius = 5;
 int connection = 0;
 int  switchon = 1000;
 String VERSION = "scotch_v_1.1";
-String DataStatus = "nill";
+int DataStatus = 7;
 long lastReconnectAttempt = 0;
 unsigned long acktime;
 unsigned long prev_acktime;
@@ -316,6 +318,7 @@ void loop() {
   yield();
   wifi_status =  wifi_connect(wifi_status);
   DataStatus = send_req(DataStatus);
+  writeEprom = write_eprom(writeEprom);
   yield();
   delay(15);
   if (strcmp(hotspot_, "1") == 0) {
