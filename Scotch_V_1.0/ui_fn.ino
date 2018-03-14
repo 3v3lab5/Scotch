@@ -454,11 +454,11 @@ void UI_infuse()
             //            EEPROM.commit();
             //            EEPROM.end();
             //            prev_inf_save = 1;
-                                    ui_state = 3;   //testing
-                                    state = 9;
+//                                    ui_state = 3;   //testing
+//                                    state = 9;
             irAmp = 450;
-//            ui_state = 16;
-//            state = 18;
+            ui_state = 16;
+            state = 18;
           }
           else
           {
