@@ -52,9 +52,9 @@ void menu_1()
    // _dripo.setDcount(dcount_eep);
    dcount=dcount_eep;   
 
-    //    ui_state = 3;   //testing
-    //    state = 9;
-    //    MonState = 3;
+//        ui_state = 3;   //testing
+//        state = 9;
+//        MonState = 3;
 
     prev_inf_save = prev_inf;
     ui_state = 16;
@@ -161,7 +161,7 @@ void Server_Err()
 
 void M_infuse()
 {
-  if (DataStatus == "nill")
+  if (DataStatus == 7)
   {
     ui_state = 4;
 
@@ -367,7 +367,7 @@ void Sho_Rate()
           MonState = 3;
           if ( prev_inf_save == 1)
           {
-            DataStatus = "start";
+            DataStatus = 4;
           }
         }
         break;
@@ -397,7 +397,7 @@ void Sho_Rate()
           //MENU *dpf= new MENU;
           if ( prev_inf_save == 1)
           {
-            DataStatus = "stop";
+            DataStatus = 5;
           }
           prev_inf = 0;
           state = 2;
@@ -618,7 +618,7 @@ void OnOfselect()
         if (WiFi.status() == WL_CONNECTED)
         { if (mqttClient.connected()) {
           dcount=0;
-            DataStatus = "bed";
+            DataStatus = 1;
             //           state = 5;
 
           }

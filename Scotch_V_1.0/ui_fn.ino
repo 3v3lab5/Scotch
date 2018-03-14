@@ -138,15 +138,11 @@ void UI_Rate()
 
         if (ticker_reached ) {
 
-          EEPROM.begin(512);
-          EEPROM.put(180, _dripo.getDcount());
-          EEPROM.commit();
-          EEPROM.end();
-          yield();
+          writeEprom = true;
 
           if (prev_inf_save == 1) {
 
-            DataStatus = "log";
+            DataStatus = 6;
 
           }
       ticker_reached = false;                                                // data is send and ticker is reset
@@ -222,7 +218,7 @@ void UI_Rate()
             prev_inf = 0;
             if (prev_inf_save == 1)
             {
-              DataStatus = "stop";
+              DataStatus = 5;
             }
             state = 2;
             ui_state = 2;
@@ -263,7 +259,7 @@ void UI_infuse()
         }
         else {
           _dripo.setDf(dpf.getSelect());
-          DataStatus = "rate";
+          DataStatus = 3;
           //  infuseMenu = 1;
         }
         break;
@@ -287,7 +283,7 @@ void UI_infuse()
         }
         else {
           _dripo.setBed(bed.getSelect());
-          DataStatus = "med";
+          DataStatus = 2;
           //    infuseMenu = 2;
           //  ui_state = 3;
 
@@ -312,7 +308,7 @@ void UI_infuse()
         }
         else {
           _dripo.setMed(med.getSelect());
-          DataStatus = "df";
+          DataStatus = 0;
 
           //        infuseMenu = 3;
 
@@ -458,11 +454,11 @@ void UI_infuse()
             //            EEPROM.commit();
             //            EEPROM.end();
             //            prev_inf_save = 1;
-            //                        ui_state = 3;   //testing
-            //                        state = 9;
+                                    ui_state = 3;   //testing
+                                    state = 9;
             irAmp = 450;
-            ui_state = 16;
-            state = 18;
+//            ui_state = 16;
+//            state = 18;
           }
           else
           {
