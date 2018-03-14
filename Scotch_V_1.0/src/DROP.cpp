@@ -56,7 +56,7 @@ void DROP::setTime(unsigned long int drip_time,long d_count)
     if(setCount==false)
     {
 	    _monCount=_Dcount;
-	    _LastEtime=_Etime;
+	    _LastEtime=0;
 	    setCount=true;
     }
 }
