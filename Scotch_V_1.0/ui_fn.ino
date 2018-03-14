@@ -146,9 +146,10 @@ void UI_Rate()
 
           if (prev_inf_save == 1) {
 
-            sendRate();
-            yield();
+            DataStatus = "log";
+
           }
+      ticker_reached = false;                                                // data is send and ticker is reset
 
         }
       }
