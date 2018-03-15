@@ -44,7 +44,9 @@ boolean staAck = false;
 boolean devAck = false;
 boolean up_date = false;
 String up_status = "Exit";
-boolean writeEprom = false;
+int writeEprom = 0;
+boolean callErrHandlerFlag = false;
+
 
 
 boolean outofrange = false;
@@ -313,6 +315,7 @@ void loop() {
   u8g2.clearBuffer();
   UI_Fn[ui_state]();
   STBAR();
+  callErrHandlerFlag =  call_err_handler(callErrHandlerFlag);
   u8g2.sendBuffer();
   myFunc[state]();
   yield();

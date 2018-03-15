@@ -190,7 +190,7 @@ void ERR_HANDLER::err_alerttype1()
 
 void ERR_HANDLER::err_alerttype2()
 {
-	_u8g2.setFont(u8g2_font_crox2h_tr);
+	_u8g2.setFont(u8g2_font_crox2hb_tr);
 			if(ERR==405)
 				{
 					_u8g2.setDrawColor(2);
