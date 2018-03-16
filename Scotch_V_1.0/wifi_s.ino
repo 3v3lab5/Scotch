@@ -1,6 +1,5 @@
 int wifi_connect(int WIFI_STATE)
 {
-mqttClient.loop();
   const char* DRIPO_NAME = "DRIPO-%d";
 
   sprintf(id, DRIPO_NAME, ESP.getChipId());
@@ -43,15 +42,18 @@ mqttClient.loop();
           if (mqtt_reconnect()) {
             lastReconnectAttempt = 0;
             connection = 0;
-          }
 
+          }
+          
         }
+  
+         }
       }
+          return 2;
 
     }
 
-    return 2;
-  }
+  
   if ( WIFI_STATE == 4)
   {
 

@@ -270,7 +270,7 @@ void setup() {
   batteryMonitor.reset();
   batteryMonitor.quickStart();
   logo_time = 0;
-  ticker.attach(120, ticker_handler);
+  ticker.attach(20, ticker_handler);
   ESP.wdtDisable();
   ESP.wdtEnable(WDTO_8S);
   u8g2.begin();
@@ -310,14 +310,15 @@ void (* myFunc[21])() = {drawLogo, wifi_init, menu_1, reset_menu, Server_Err, M_
 void (* UI_Fn[21])() = {UI_Logo, UI_Wifi, UI_Menu, UI_Rate, UI_infuse, UI_Update, UI_Shutdown, UI_Setup, UI_WifiConf, UI_reset, UI_dripo, UI_ServErr, UI_batlow, UI_InfBatChK, UI_batchk, UI_batfull, UI_Calib, UI_S_Err, Off_Infuse, UI_OnOf, UI_Hotspot};
 
 void loop() {
+  mqttClient.loop();
   //digitalWrite(WAKE_PIN, LOW);
   analogWrite(WAKE_PIN, switchon);
+   myFunc[state]();
   u8g2.clearBuffer();
   UI_Fn[ui_state]();
   STBAR();
   callErrHandlerFlag =  call_err_handler(callErrHandlerFlag);
   u8g2.sendBuffer();
-  myFunc[state]();
   yield();
   wifi_status =  wifi_connect(wifi_status);
   DataStatus = send_req(DataStatus);
