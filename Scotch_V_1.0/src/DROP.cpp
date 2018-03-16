@@ -46,19 +46,22 @@ void DROP::setDcount(long dcount)
 //fuction gets the Elapsed time btwn drops from the interrupt nd it incriment the no of drops
 void DROP::setTime(unsigned long int drip_time,long d_count)
 {
+     if(setCount==false)
+       {   
+            drip_time =1000;
+            _monCount=d_count;
+            _LastEtime=0;
+            setCount=true;
+        }
     _Etime = drip_time;
     _Dcount=d_count;
     _rate = (long)60000 / _Etime;
     newrate = movingAvg.process(_rate);
+       
     if (_Etime < 1000) {
 	_rate = newrate;
     }
-    if(setCount==false)
-    {
-	    _monCount=_Dcount;
-	    _LastEtime=0;
-	    setCount=true;
-    }
+   
 }
 
 //Set drop factor of the drip set
@@ -241,12 +244,12 @@ int DROP::Alert(unsigned long int _time)
     err = getR2setDPM() - _rate;
     _LastEtime = _time;
     errtime = map(_rate,1,300,2,40);
-    if (_LastEtime > (errtime * _Etime) && getinfPercent() < 96) {
+    if (_LastEtime > (errtime * _Etime) && getinfPercent() < 96&&setCount== true) {
 	_monCount = _Dcount;
 	return BLOCK;
     }
 
-    else if (_LastEtime > (10 * _Etime) && getinfPercent() >= 96) {
+    else if (_LastEtime > (10 * _Etime) && getinfPercent() >= 96&&setCount== true) {
 	_monCount = _Dcount;
 	return EMPTY;
     }

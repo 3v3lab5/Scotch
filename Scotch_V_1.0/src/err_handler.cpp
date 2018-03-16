@@ -72,31 +72,31 @@ void ERR_HANDLER::err_alerttype1()
 
 				
                                     if(wasExecuted1==false){
-					for (long i = 0; i < 250; i++ )
-				{
-  					  digitalWrite(15, HIGH);
-   					delayMicroseconds(500);
-   					digitalWrite(15, LOW);
-  					 delayMicroseconds(500);
-				}
-					delay(200);
-					yield();
-			for (long i = 0; i < 250; i++ )
-				{
-  					  digitalWrite(15, HIGH);
-   					delayMicroseconds(500);
-   					digitalWrite(15, LOW);
-  					 delayMicroseconds(500);
-				}
-			delay(200);
-			yield();
-			for (long i = 0; i < 250; i++ )
-				{
-  					  digitalWrite(15, HIGH);
-   					delayMicroseconds(500);
-   					digitalWrite(15, LOW);
-  					 delayMicroseconds(500);
-				}
+			// 		for (long i = 0; i < 250; i++ )
+			// 	{
+  	// 				  digitalWrite(15, HIGH);
+   // 					delayMicroseconds(500);
+   // 					digitalWrite(15, LOW);
+  	// 				 delayMicroseconds(500);
+			// 	}
+			// 		delay(200);
+			// 		yield();
+			// for (long i = 0; i < 250; i++ )
+			// 	{
+  	// 				  digitalWrite(15, HIGH);
+   // 					delayMicroseconds(500);
+   // 					digitalWrite(15, LOW);
+  	// 				 delayMicroseconds(500);
+			// 	}
+			// delay(200);
+			// yield();
+			// for (long i = 0; i < 250; i++ )
+			// 	{
+  	// 				  digitalWrite(15, HIGH);
+   // 					delayMicroseconds(500);
+   // 					digitalWrite(15, LOW);
+  	// 				 delayMicroseconds(500);
+			// 	}
 					mqttsenderror("Block");
 					yield();
 				      wasExecuted1=true;
@@ -113,31 +113,31 @@ void ERR_HANDLER::err_alerttype1()
 					_u8g2.setDrawColor(1);
 					if(wasExecuted2==false){
 
-								for (long i = 0; i < 250; i++ )
-				{
-  					  digitalWrite(15, HIGH);
-   					delayMicroseconds(500);
-   					digitalWrite(15, LOW);
-  					 delayMicroseconds(500);
-				}
-								delay(200);
-								yield();
-							for (long i = 0; i < 250; i++ )
-				{
-  					  digitalWrite(15, HIGH);
-   					delayMicroseconds(500);
-   					digitalWrite(15, LOW);
-  					 delayMicroseconds(500);
-				}
-							delay(200);
-							yield();
-							for (long i = 0; i < 250; i++ )
-				{
-  					  digitalWrite(15, HIGH);
-   					delayMicroseconds(500);
-   					digitalWrite(15, LOW);
-  					 delayMicroseconds(500);
-				}
+				// 				for (long i = 0; i < 250; i++ )
+				// {
+  		// 			  digitalWrite(15, HIGH);
+   	// 				delayMicroseconds(500);
+   	// 				digitalWrite(15, LOW);
+  		// 			 delayMicroseconds(500);
+				// }
+				// 				delay(200);
+				// 				yield();
+				// 			for (long i = 0; i < 250; i++ )
+				// {
+  		// 			  digitalWrite(15, HIGH);
+   	// 				delayMicroseconds(500);
+   	// 				digitalWrite(15, LOW);
+  		// 			 delayMicroseconds(500);
+				// }
+				// 			delay(200);
+				// 			yield();
+				// 			for (long i = 0; i < 250; i++ )
+				// {
+  		// 			  digitalWrite(15, HIGH);
+   	// 				delayMicroseconds(500);
+   	// 				digitalWrite(15, LOW);
+  		// 			 delayMicroseconds(500);
+				// }
 						mqttsenderror("Empty");
 						yield();
 					wasExecuted2=true;}	
@@ -152,22 +152,22 @@ void ERR_HANDLER::err_alerttype1()
 					_u8g2.setDrawColor(1);
 					
 					if(wasExecuted3==false){
-						for (long i = 0; i < 250; i++ )
-				{
-  					  digitalWrite(15, HIGH);
-   					delayMicroseconds(500);
-   					digitalWrite(15, LOW);
-  					 delayMicroseconds(500);
-				} 
-						delay(200);
-						yield();
-						for (long i = 0; i < 250; i++ )
-				{
-  					  digitalWrite(15, HIGH);
-   					delayMicroseconds(500);
-   					digitalWrite(15, LOW);
-  					 delayMicroseconds(500);
-				}
+				// 		for (long i = 0; i < 250; i++ )
+				// {
+  		// 			  digitalWrite(15, HIGH);
+   	// 				delayMicroseconds(500);
+   	// 				digitalWrite(15, LOW);
+  		// 			 delayMicroseconds(500);
+				// } 
+				// 		delay(200);
+				// 		yield();
+				// 		for (long i = 0; i < 250; i++ )
+				// {
+  		// 			  digitalWrite(15, HIGH);
+   	// 				delayMicroseconds(500);
+   	// 				digitalWrite(15, LOW);
+  		// 			 delayMicroseconds(500);
+				// }
 				       mqttsenderror("Rate_Err");
 				       yield();
 					wasExecuted3=true;}
@@ -190,7 +190,7 @@ void ERR_HANDLER::err_alerttype1()
 
 void ERR_HANDLER::err_alerttype2()
 {
-	_u8g2.setFont(u8g2_font_crox2h_tr);
+	_u8g2.setFont(u8g2_font_crox2hb_tr);
 			if(ERR==405)
 				{
 					_u8g2.setDrawColor(2);

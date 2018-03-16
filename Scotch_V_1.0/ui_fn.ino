@@ -138,7 +138,7 @@ void UI_Rate()
 
         if (ticker_reached ) {
 
-          writeEprom = true;
+          writeEprom = 1;
 
           if (prev_inf_save == 1) {
 
@@ -196,8 +196,9 @@ void UI_Rate()
           _errAlert.wasExecuted();
         }
       }
-      sleeper = _errAlert.display_err(_dripo.getTimetable(), altmsg, devAck, staAck, id, _dripo.getMed(), _dripo.getRateMl(), _dripo.getvolInf(), _dripo.getRtime(), _dripo.getTvol(), prev_inf_save, stateOfCharge);
-      yield();
+      callErrHandlerFlag = true;
+      //sleeper = _errAlert.display_err(_dripo.getTimetable(), altmsg, devAck, staAck, id, _dripo.getMed(), _dripo.getRateMl(), _dripo.getvolInf(), _dripo.getRtime(), _dripo.getTvol(), prev_inf_save, stateOfCharge);
+      //yield();
       // if(callerrhandlerflag==true)
       // {
       //     sleeper=_errAlert.display_err(altmsg,devAck,staAck,id,_dripo.getMed());
@@ -211,10 +212,7 @@ void UI_Rate()
           devAck = true;
           if (altmsg == EMPTY || altmsg == COMPLETED )
           {
-            EEPROM.begin(512);
-            EEPROM.put(200, 0);    //no prev infusions pending
-            EEPROM.commit();
-            EEPROM.end();
+            writeEprom=2;
             prev_inf = 0;
             if (prev_inf_save == 1)
             {
@@ -226,8 +224,9 @@ void UI_Rate()
             MonState = 0;
           }
           else {
-            sleeper = _errAlert.display_err(_dripo.getTimetable(), altmsg, devAck, staAck, id, _dripo.getMed(), _dripo.getRateMl(), _dripo.getvolInf(), _dripo.getRtime(), _dripo.getTvol(), prev_inf_save, stateOfCharge);
-              yield();
+                  callErrHandlerFlag = true;
+            //sleeper = _errAlert.display_err(_dripo.getTimetable(), altmsg, devAck, staAck, id, _dripo.getMed(), _dripo.getRateMl(), _dripo.getvolInf(), _dripo.getRtime(), _dripo.getTvol(), prev_inf_save, stateOfCharge);
+              //yield();
             PMonState = MonState;
             MonState = 0;
           }

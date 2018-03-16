@@ -49,7 +49,7 @@ void menu_1()
     _dripo.setTvol(String(tvol_eeprom));
     _dripo.setMed(String(med_eep));
     _dripo.setTimetable(String(timet_eep));
-   // _dripo.setDcount(dcount_eep);
+   _dripo.setDcount(dcount_eep);
    dcount=dcount_eep;   
 
 //        ui_state = 3;   //testing
@@ -75,7 +75,7 @@ void menu_1()
         {
           case 0 :   state = 19;
             ui_state = 19;
-
+            wifi_status = 5;
             break;
 
           case 1 :
@@ -578,8 +578,9 @@ void SensorCalib()
 
     if (prev_inf == 1 || prev_inf == 2)
     {
+        state = 9;
       ui_state = 3;   //testing
-      state = 9;
+     
       MonState = 3;
     }
     else {
