@@ -4,6 +4,19 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
   payload[length] = '\0';
   //compare topic of recive msgs
+//if topic is cretaskreply
+  if (strcmp((char*)topic, r_channel_cretask) == 0)
+  {
+    char *token;
+    token = strtok((char*)payload, "&");      // timetable
+    _dripo.setTimetable(String((char*)token)); //save  timetable
+    token = strtok(NULL, "&");                  // name
+    _dripo.setMed(String((char*)token));        //save patient name
+     ui_state = 3;   //testing
+     state = 9;
+  }
+
+
 
   //if topic is drop factor channel create Menu of dropfactor
   if (strcmp((char*)topic, r_channel_df) == 0)

@@ -35,6 +35,8 @@ String Status = "Online-"+ESP.getResetReason();
     sprintf(r_channel_rate, mqtt_channel_r2set, id);
     sprintf(r_channel_staAck, mqtt_channel_staAck, id);
     sprintf(r_channel_error, mqtt_channel_error, id);
+    sprintf(r_channel_cretask, mqtt_channel_cretaskreply, id);
+
 
 
     //subscribe to channels
@@ -46,6 +48,8 @@ String Status = "Online-"+ESP.getResetReason();
     mqttClient.subscribe(r_channel_rate, qos);
     mqttClient.subscribe(r_channel_staAck, qos);
     mqttClient.subscribe(r_channel_error, qos);
+    mqttClient.subscribe(r_channel_cretask, qos);
+
 
   }
   return mqttClient.connected();

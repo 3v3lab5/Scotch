@@ -27,12 +27,15 @@ int send_req(int Data)
       return 7;
       break;
     }
-    case 2:
+    case 2: //send a req to create a task in server
     {
+          char e_data[80];
+
       String medi = _dripo.getBed();
       const char* chr = medi.c_str();
-      sprintf(pat_channel, mqtt_channel_medreq, id);
-      mqttClient.publish(pat_channel, chr);
+      sprintf(e_data, "%s-%d-%d", chr,_dripo.getDf(),_dripo.getTvol());
+      sprintf(cretask_channel, mqtt_channel_cretask, id);
+      mqttClient.publish(cretask_channel, e_data);
       yield();
       return 7;
       break;

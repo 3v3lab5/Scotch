@@ -246,8 +246,9 @@ void UI_Rate()
 }
 
 void UI_infuse()
-
 {
+    static int pos = 40, w = 30, vol = 500, rate = 100;
+
   if (infuseMenu == 0)
   {
     dpf.display_menu();
@@ -258,8 +259,8 @@ void UI_infuse()
         }
         else {
           _dripo.setDf(dpf.getSelect());
-          DataStatus = 3;
-          //  infuseMenu = 1;
+          //DataStatus = 3;
+            infuseMenu = 3;
         }
         break;
       case 3: dpf.up();
@@ -282,8 +283,8 @@ void UI_infuse()
         }
         else {
           _dripo.setBed(bed.getSelect());
-          DataStatus = 2;
-          //    infuseMenu = 2;
+         // DataStatus = 2;
+            infuseMenu = 2;
           //  ui_state = 3;
 
           //  state = 9;
@@ -298,29 +299,66 @@ void UI_infuse()
 
   if (infuseMenu == 2)
   {
-    med.display_menu();
+     String VOLUME = String(vol);
+    u8g2.setDrawColor(2);
+    u8g2.drawBox(0, 0, 64, 14);
+    u8g2.drawBox(0, 105, 64, 20);
+
+    u8g2.setDrawColor(0);
+    u8g2.setFont(u8g2_font_crox2h_tr);
+    int strwidth = u8g2.getStrWidth("Volume");
+    u8g2.setCursor(32 - (strwidth / 2), 11);
+    u8g2.print("Volume");
+
+    //u8g2.setDrawColor(1);
+    u8g2.setDrawColor(2);
+    u8g2.drawBox(0, pos, 64, w);
+    u8g2.setDrawColor(1);
+    strwidth = u8g2.getStrWidth("^");
+    u8g2.setCursor(32 - (strwidth / 2), 43);
+    u8g2.print("^");
+    u8g2.setFontDirection(2);
+    u8g2.setCursor(38 - (strwidth / 2), 66);
+    u8g2.print("^");
+    u8g2.setFontDirection(0);
+
+    u8g2.setDrawColor(0);
+    u8g2.setFont(u8g2_font_timR18_tn);
+
+    strwidth = u8g2.getStrWidth(VOLUME.c_str());
+    u8g2.setCursor(32 - (strwidth / 2), 63);
+    u8g2.print(VOLUME);
+    u8g2.setDrawColor(1);
+    u8g2.setFont(u8g2_font_crox2h_tr);
+    u8g2.setCursor(43, 88);
+    u8g2.print("ml");
+    u8g2.setDrawColor(0);
+    strwidth = u8g2.getStrWidth("Ok");
+    u8g2.setCursor(32 - (strwidth / 2), 120);
+    u8g2.print("Ok");
+
+    u8g2.setDrawColor(1);
+
+
+    // u8g2.drawFrame(0, 40, 64, 30);
+
+
     switch (get_button())
     {
-      case 1: if (med.getSelect() == "<<back")
-        {
-          infuseMenu = 1;
-        }
-        else {
-          _dripo.setMed(med.getSelect());
-          DataStatus = 0;
+      case 1: _dripo.setTvol(VOLUME);
+        infuseMenu = 0;
 
-          //        infuseMenu = 3;
-
-          //   ui_state = 3;
-
-          //   state = 9;
+        break;
+      case 3: if (vol < 1000) {
+          vol = vol + 25;
         }
         break;
-      case 3: med.up();
-        break;
-      case 4: med.dwn();
+      case 4: if (vol > 50) {
+          vol = vol - 25;
+        }
         break;
     }
+
   }
 
 
@@ -425,8 +463,8 @@ void UI_infuse()
           EEPROM.commit();
           EEPROM.end();
           prev_inf_save = 1;
-          if (stateOfCharge > (10 * (_dripo.getTtime() / 60)))
-          {
+//          if (stateOfCharge > (10 * (_dripo.getTtime() / 60)))
+//          {
             //            char med[35];
             //            char timet[35];
             //            String timeidcpy = _dripo.getTimetable();
@@ -456,15 +494,16 @@ void UI_infuse()
 //                                    ui_state = 3;   //testing
 //                                    state = 9;
             irAmp = 450;
-            ui_state = 16;
-            state = 18;
-          }
-          else
-          {
-            irAmp = 450;
-            ui_state = 13;
-            state = 16;
-          }
+            DataStatus = 2;
+            //ui_state = 16;
+            //state = 18;
+//          }
+//          else
+//          {
+//            irAmp = 450;
+//            ui_state = 13;
+//            state = 16;
+//          }
 
         }
         break;

@@ -49,12 +49,12 @@ void menu_1()
     _dripo.setTvol(String(tvol_eeprom));
     _dripo.setMed(String(med_eep));
     _dripo.setTimetable(String(timet_eep));
-   _dripo.setDcount(dcount_eep);
-   dcount=dcount_eep;   
+    _dripo.setDcount(dcount_eep);
+    dcount = dcount_eep;
 
-//        ui_state = 3;   //testing
-//        state = 9;
-//        MonState = 3;
+    //        ui_state = 3;   //testing
+    //        state = 9;
+    //        MonState = 3;
 
     prev_inf_save = prev_inf;
     ui_state = 16;
@@ -131,7 +131,7 @@ void reset_menu()
         EEPROM.end();
         delay(250);
         wifi_status = 3;
-         ESP.restart();
+        ESP.restart();
 
       }
 
@@ -318,20 +318,21 @@ void update_dripo()
 
 void Sho_Rate()
 {
- if (logtime > 200&&drop_detect==true) {  //detect drop id time b/w drops is > 200ms.. to avoid double detection of drops and too limit dectection rate
-   _dripo.setTime(logtime,dcount);    //send time b/w drops for calculations
-    drop_detect=false;
- //   outofrange = false;
- }
+  if (logtime > 200 && drop_detect == true) { //detect drop id time b/w drops is > 200ms.. to avoid double detection of drops and too limit dectection rate
+    _dripo.setTime(logtime, dcount);   //send time b/w drops for calculations
+    drop_detect = false;
+    //   outofrange = false;
+  }
 
-  if (_dripo.MonRate() == 1 && MonState == 0)
+  if ( MonState == 0)
   {
+    //_dripo.MonRate() == 1 &&
     PMonState = MonState;
     MonState = 2;
   }
 
 
-  if (MonState == 0 || (MonState == 3 && (altmsg == NO_ERR || devAck == true))) {
+  else if (MonState == 0 || (MonState == 3 && (altmsg == NO_ERR || devAck == true))) {
 
 
     switch (get_button())
@@ -347,11 +348,11 @@ void Sho_Rate()
   else if (MonState == 2) {
 
 
-    if (_dripo.MonRate() == 0)
-
-    {
-      MonState = PMonState;
-    }
+    //    if (_dripo.MonRate() == 0)
+    //
+    //    {
+    //      MonState = PMonState;
+    //    }
 
 
     switch (get_button())
@@ -364,10 +365,15 @@ void Sho_Rate()
           EEPROM.put(200, prev_inf_save);    //infusion started and it is not completed
           EEPROM.commit();
           EEPROM.end();
-          MonState = 3;
+          String rate_pre = String(_dripo.getRateMl());
+          //          String((char*)token)
+          _dripo.setR2set(rate_pre);       //save rate to set
           if ( prev_inf_save == 1)
           {
             DataStatus = 4;
+            MonState = 3;
+      ticker_reached = false;                                                // data is send and ticker is reset
+
           }
         }
         break;
@@ -439,12 +445,12 @@ void WifiConf()
 
 void Sleep()
 {
-  if (logtime > 200&&drop_detect==true&&prev_state==9) {  //detect drop id time b/w drops is > 200ms.. to avoid double detection of drops and too limit dectection rate
-   _dripo.setTime(logtime,dcount);    //send time b/w drops for calculations
-    drop_detect=false;
- //   outofrange = false;
- }
- 
+  if (logtime > 200 && drop_detect == true && prev_state == 9) { //detect drop id time b/w drops is > 200ms.. to avoid double detection of drops and too limit dectection rate
+    _dripo.setTime(logtime, dcount);   //send time b/w drops for calculations
+    drop_detect = false;
+    //   outofrange = false;
+  }
+
   idle_time = 0;
   u8g2.setPowerSave(1);
   if (sleeper == false)
@@ -574,13 +580,13 @@ void SensorCalib()
   {
     irAmp = irAmp - 5;
   }
-   if (analogRead(A0) >= 505 && analogRead(A0) < 535) {
+  if (analogRead(A0) >= 505 && analogRead(A0) < 535) {
 
     if (prev_inf == 1 || prev_inf == 2)
     {
-        state = 9;
+      state = 9;
       ui_state = 3;   //testing
-     
+
       MonState = 3;
     }
     else {
@@ -618,7 +624,7 @@ void OnOfselect()
 
         if (WiFi.status() == WL_CONNECTED)
         { if (mqttClient.connected()) {
-          dcount=0;
+            dcount = 0;
             DataStatus = 1;
             //           state = 5;
 
@@ -635,7 +641,7 @@ void OnOfselect()
         }
       }
       else  if (select.getSelect() == "OFFLINE") {
-        dcount=0;
+        dcount = 0;
         Of_infuseMenu = 0;
         state = 12;
         ui_state = 18;

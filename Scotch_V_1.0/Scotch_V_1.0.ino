@@ -1,3 +1,7 @@
+/*
+ __
+| |
+*/
 #include <FS.h>
 #include <EEPROM.h>
 #include <ArduinoJson.h>
@@ -161,6 +165,8 @@ char r_channel_version[50];
 char r_channel_update[50];
 char r_channel_staAck[50];
 char r_channel_error[50];
+char r_channel_cretask[50];
+
 
 const char* mqtt_channel_version = "dripo/%s/version";               ///request from server for current version
 const char* mqtt_channel_update = "dripo/%s/update";                    /// request from server for update
@@ -170,6 +176,7 @@ const char* mqtt_channel_med = "dripo/%s/med";                    /// to recieve
 const char* mqtt_channel_r2set = "dripo/%s/rate2set"; /// to recieve patient details
 const char* mqtt_channel_staAck = "dripo/%s/staAck"; /// station ack
 const char* mqtt_channel_error = "error/%s"; /// error channel
+const char* mqtt_channel_cretaskreply = "dripo/%s/cretaskreply"; /// error channel
 
 //publish
 char pat_channel[50];
@@ -178,6 +185,8 @@ char rate_channel[50];
 char log_channel[50];
 char will_msg[50];
 char staAck_channel[50];
+char cretask_channel[50];
+
 const char* mqtt_channel_myversion = "dripo/%s/myversion";                  ///to send current version
 //const char* mqtt_channel_rate = "dripo/%s/rate";                  ///to send rate details
 const char* mqtt_channel_req = "dripo/%s/req_df";                  ///to send df details
@@ -187,6 +196,8 @@ const char* mqtt_channel_ratereq = "dripo/%s/rate_req";                  ///to s
 const char* mqtt_channel_mon = "dripo/%s/mon";                  ///to send start/stop details
 const char* mqtt_channel_log = "dripo/%s/log";                  ///to send err details
 const char* mqtt_channel_will = "dripo/%s/will";                  ///to send will msg
+const char* mqtt_channel_cretask = "dripo/%s/cretask_req";                  ///to send bed details
+
 //const char* mqtt_channel_devack = "dripo/%s/ack_dev";
 /// to publish dev ack
 
