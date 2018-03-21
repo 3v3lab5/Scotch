@@ -48,7 +48,7 @@ void DROP::setTime(unsigned long int drip_time,long d_count)
 {
      if(setCount==false)
        {   
-            drip_time =1000;
+            drip_time =6000;
             _monCount=d_count;
             _LastEtime=0;
             setCount=true;

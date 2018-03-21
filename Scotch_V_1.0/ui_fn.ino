@@ -136,18 +136,21 @@ void UI_Rate()
         devAck = false;
         staAck = false;
 
-        if (ticker_reached ) {
-
-          writeEprom = 1;
-
-          if (prev_inf_save == 1) {
-
-            DataStatus = 6;
-
-          }
-      ticker_reached = false;                                                // data is send and ticker is reset
-
+//        if (ticker_reached ) {
+//
+if(dcount%50 == 0 && inf_msg_send == true){   //to send infusing message for every 50th drop
+  send_msg_flag = true;
+  
+  }
+ if(send_msg_flag){   
+        writeEprom = 1;
+        if (prev_inf_save == 1) {
+           DataStatus = 6;
         }
+//      ticker_reached = false;                                                // data is send and ticker is reset
+   send_msg_flag = false;
+   inf_msg_send = false;
+      }
       }
 
       _errAlert.wasExecuted();
@@ -224,6 +227,7 @@ void UI_Rate()
             MonState = 0;
           }
           else {
+                  senderrackFlag = true;
                   callErrHandlerFlag = true;
             //sleeper = _errAlert.display_err(_dripo.getTimetable(), altmsg, devAck, staAck, id, _dripo.getMed(), _dripo.getRateMl(), _dripo.getvolInf(), _dripo.getRtime(), _dripo.getTvol(), prev_inf_save, stateOfCharge);
               //yield();
@@ -954,8 +958,8 @@ void Off_Infuse()
             //            EEPROM.end();
             //            prev_inf_save = 2;
 
-            //                                   ui_state = 3;   //testing
-            //                                  state = 9;
+//                                               ui_state = 3;   //testing
+//                                              state = 9;
 
             ui_state = 16;
             state = 18;

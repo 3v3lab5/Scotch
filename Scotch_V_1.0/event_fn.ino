@@ -83,12 +83,13 @@ void encoder() {
 /*Drop dectection interrupt code*/
 void checkdrop()
 {
-// if (timeElapsed > 200) {  //detect drop id time b/w drops is > 200ms.. to avoid double detection of drops and too limit dectection rate
+// if (millis()- > 200) {  //detect drop id time b/w drops is > 200ms.. to avoid double detection of drops and too limit dectection rate
 //   _dripo.setTime(timeElapsed);    //send time b/w drops for calculations
-logtime = timeElapsed;  // for preclincal studies log each drop
+logtime = millis()-dropmillis;  // for preclincal studies log each drop
 drop_detect = true;
+inf_msg_send = true;
 ////   logstatus = 1;
-    timeElapsed = 0;
+   timeElapsed = 0;
    detect1 = 0;                    //  blinker on each drop
     detect2 = 1;
     dcount++;
@@ -100,6 +101,8 @@ drop_detect = true;
 //  timeElapsed = 0;
 //
 // }
+ dropmillis = millis();
+
 
 }
 

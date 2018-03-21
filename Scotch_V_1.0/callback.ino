@@ -117,13 +117,13 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
 /*This fucntion is is called every 30s, intilased in setup fn*/
 
-void ticker_handler() {
-
-  ticker_reached = true;       //ticker is true send data.. do nothing otherwise
-  //boolean sleep = false;
-
-
-}
+//void ticker_handler() {
+//
+//  ticker_reached = true;       //ticker is true send data.. do nothing otherwise
+//  //boolean sleep = false;
+//
+//
+//}
 
 
 

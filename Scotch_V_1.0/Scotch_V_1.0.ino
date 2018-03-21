@@ -14,7 +14,7 @@
 //#include <ESP8266mDNS.h>
 #include <ESP8266WebServer.h>
 #include <elapsedMillis.h>
-#include <Ticker.h>
+//#include <Ticker.h>
 #include "src/icons.h"
 #include "src/MAINMENU.h"
 #include "src/ICON.h"
@@ -30,13 +30,13 @@ extern "C" {
 }
 elapsedMillis timeElapsed, logo_time, idle_time; //dataTicker;
 MAX17043 batteryMonitor;
-Ticker ticker;
+//Ticker ticker;
 float wifirssi;
 int stateOfCharge;
 float cellVoltage;
 boolean startDisplay = false;
 boolean sleep = false;
-boolean ticker_reached;
+//boolean ticker_reached;
 boolean sleeper = false;
 boolean notified = false;
 boolean batchkflag = false;
@@ -46,6 +46,8 @@ boolean up_date = false;
 String up_status = "Exit";
 int writeEprom = 0;
 boolean callErrHandlerFlag = false;
+boolean send_msg_flag = false;
+boolean inf_msg_send = false;
 
 
 
@@ -58,7 +60,6 @@ long downTime = -1; // time the button was pressed down
 long upTime = -1; // time the button was released
 int debounce = 20; // ms debounce period to prevent flickering when pressing or releasing the button
 boolean longHoldEventPast = false;// whether or not the long hold event happened already
-
 ESP8266WebServer *server;
 
 #define BUZZ_PIN        15
@@ -97,7 +98,8 @@ unsigned long acktime;
 unsigned long prev_acktime;
 unsigned long alerttime;
 unsigned long prev_alerttime;
-unsigned int lastmillis;
+unsigned int lastmillis=0;
+unsigned int dropmillis=0;
 long dcount=0;
 
 int prev_inf = 0;
@@ -270,12 +272,12 @@ void setup() {
   batteryMonitor.reset();
   batteryMonitor.quickStart();
   logo_time = 0;
-  ticker.attach(20, ticker_handler);
+  //ticker.attach(20, ticker_handler);
   ESP.wdtDisable();
   ESP.wdtEnable(WDTO_8S);
   u8g2.begin();
 
-  wifi_set_sleep_type(MODEM_SLEEP_T);
+ // wifi_set_sleep_type(MODEM_SLEEP_T);
 
   if (strcmp(hotspot_, "1") == 0) {
 
@@ -290,7 +292,7 @@ void setup() {
     IPAddress myIP = WiFi.softAPIP(); //Get IP address
     Serial.print("HotSpt IP:");
     Serial.println(myIP);
- server = new ESP8266WebServer(80);
+    server = new ESP8266WebServer(80);
     server->on("/", handleRoot);      //Which routine to handle at root location
     server->on("/action", handleResponse);
     server->begin();                  //Start server
@@ -324,7 +326,7 @@ void loop() {
   DataStatus = send_req(DataStatus);
   writeEprom = write_eprom(writeEprom);
   yield();
-  delay(15);
+  //delay(15);
   if (strcmp(hotspot_, "1") == 0) {
     server->handleClient();
   }
